@@ -9,6 +9,9 @@
 import UIKit
 
 class ToDoListViewController: UITableViewController {
+    
+    var itemAray = ["Buy Milk", "Take Dog for Walk", "Destroy Universe"]
+    let defaults = UserDefaults.standard
 
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
         
@@ -18,7 +21,9 @@ class ToDoListViewController: UITableViewController {
         
         let action = UIAlertAction(title: "Add Item", style: .default) { (action) in
             
-            self.itemAray.append(textField.text ?? "No Item")
+            self.itemAray.append(textField.text!)
+            
+            self.defaults.set(self.itemAray, forKey: "ToDoListArray")
             
             self.tableView.reloadData()
         }
@@ -33,10 +38,12 @@ class ToDoListViewController: UITableViewController {
         present(alert, animated: true, completion: nil)
     }
     
-    var itemAray = ["Buy Milk", "Take Dog for Walk", "Destroy Universe"]
-    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        if let items = defaults.array(forKey: "ToDoListArray") as! [String] {
+            itemAray = items
+        }
     }
     
     //MARK: - Add Table View Methods
