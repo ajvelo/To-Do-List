@@ -10,7 +10,8 @@ import UIKit
 
 class ToDoListViewController: UITableViewController {
     
-    var itemAray = ["Buy Milk", "Take Dog for Walk", "Destroy Universe"]
+    var itemArray = [Item]()
+    
     let defaults = UserDefaults.standard
 
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
@@ -21,9 +22,12 @@ class ToDoListViewController: UITableViewController {
         
         let action = UIAlertAction(title: "Add Item", style: .default) { (action) in
             
-            self.itemAray.append(textField.text!)
+            let newItem = Item()
+            newItem.title = textField.text!
             
-            self.defaults.set(self.itemAray, forKey: "ToDoListArray")
+            self.itemArray.append(newItem)
+            
+            self.defaults.set(self.itemArray, forKey: "ToDoListArray")
             
             self.tableView.reloadData()
         }
@@ -41,8 +45,16 @@ class ToDoListViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if let items = defaults.array(forKey: "ToDoListArray") as! [String] {
-            itemAray = items
+        let newItem1 = Item()
+        newItem1.title = "Test"
+        itemArray.append(newItem1)
+        
+        let newItem2 = Item()
+        newItem2.title = "Testing"
+        itemArray.append(newItem2)
+        
+        if let items = defaults.array(forKey: "ToDoListArray") as? [Item] {
+            itemArray = items
         }
     }
     
@@ -52,28 +64,24 @@ class ToDoListViewController: UITableViewController {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
         
-        cell.textLabel?.text = itemAray[indexPath.row]
+        cell.textLabel?.text = itemArray[indexPath.row].title
+        
+        cell.accessoryType = itemArray[indexPath.row].done ? .checkmark : .none
         
         return cell
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return itemAray.count
+        return itemArray.count
     }
     
     //MARK - Delegate Methods for TableView
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark {
-            
-            tableView.cellForRow(at: indexPath)?.accessoryType = .none
-        }
+        itemArray[indexPath.row].done = !itemArray[indexPath.row].done
         
-        else {
-            tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
-        }
-        
+        tableView.reloadData()
         tableView.deselectRow(at: indexPath, animated: true)
         
     }
