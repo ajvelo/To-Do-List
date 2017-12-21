@@ -8,8 +8,9 @@
 
 import UIKit
 import RealmSwift
+import ChameleonFramework
 
-class ToDoListViewController: UITableViewController {
+class ToDoListViewController: SwipeTableViewController {
     
     var toDoItems: Results<Item>?
     let realm = try! Realm()
@@ -59,17 +60,54 @@ class ToDoListViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        tableView.rowHeight = 80
+        
+        tableView.separatorStyle = .none
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        
+        title = selectedCategory!.name
+        
+        if let colorHex = selectedCategory?.randomColor {
+            
+            navigationController?.navigationBar.barTintColor = UIColor(hexString: colorHex)
+            searchBar.barTintColor = UIColor(hexString: colorHex)
+            
+            if let navBarColor = UIColor(hexString: colorHex) {
+                navigationController?.navigationBar.tintColor = ContrastColorOf(navBarColor, returnFlat: true)
+                navigationController?.navigationBar.largeTitleTextAttributes = [NSAttributedStringKey.foregroundColor: ContrastColorOf(navBarColor, returnFlat: true)]
+            }
+        }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        
+        guard let originalColor = UIColor(hexString: "1D9BF6") else {
+            fatalError()
+        }
+        
+        navigationController?.navigationBar.barTintColor = originalColor
+        navigationController?.navigationBar.tintColor = FlatWhite()
+        navigationController?.navigationBar.largeTitleTextAttributes = [NSAttributedStringKey.foregroundColor: FlatWhite()]
     }
     
     //MARK: - Add Table View Methods
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
         
         if let item = toDoItems?[indexPath.row] {
             
             cell.textLabel?.text = item.title
+            
+            if let color = UIColor(hexString: selectedCategory!.randomColor)?.darken(byPercentage: CGFloat(indexPath.row)/CGFloat(toDoItems!.count)) {
+                
+                cell.backgroundColor = color
+                cell.textLabel?.textColor = ContrastColorOf(color, returnFlat: true)
+            }
             
             cell.accessoryType = item.done ? .checkmark : .none
         }
@@ -101,6 +139,24 @@ class ToDoListViewController: UITableViewController {
         
         tableView.deselectRow(at: indexPath, animated: true)
         
+    }
+    
+    //MARK: - Delete Data from Swipe
+    
+    override func updateModel(at indexPath: IndexPath) {
+        
+        super.updateModel(at: indexPath)
+        
+        if let itemForDeletion = self.toDoItems?[indexPath.row] {
+            
+            do {
+                try self.realm.write {
+                    self.realm.delete(itemForDeletion)
+                }
+            } catch {
+                print("Error deleting category \(error)")
+            }
+        }
     }
     
     //MARK - Load/Save Methods

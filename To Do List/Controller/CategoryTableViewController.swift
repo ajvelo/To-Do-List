@@ -8,8 +8,9 @@
 
 import UIKit
 import RealmSwift
+import ChameleonFramework
 
-class CategoryTableViewController: UITableViewController {
+class CategoryTableViewController: SwipeTableViewController {
 
     let realm = try! Realm()
     
@@ -25,6 +26,7 @@ class CategoryTableViewController: UITableViewController {
             
             let newCategory = Category()
             newCategory.name = textField.text!
+            newCategory.randomColor = UIColor.randomFlat.hexValue()
             
             self.saveCategories(category: newCategory)
         }
@@ -42,6 +44,10 @@ class CategoryTableViewController: UITableViewController {
         super.viewDidLoad()
         
         loadCategories()
+        
+        tableView.rowHeight = 80
+        
+        tableView.separatorStyle = .none
     }
 
     override func didReceiveMemoryWarning() {
@@ -58,9 +64,14 @@ class CategoryTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: "categoryCell", for: indexPath)
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
         
-        cell.textLabel?.text = categories?[indexPath.row].name ?? "No Categories Added"
+        if let category = categories?[indexPath.row] {
+            
+            cell.textLabel?.text = category.name
+            
+            cell.backgroundColor = UIColor(hexString: category.randomColor)
+        }
         
         return cell
     }
@@ -79,8 +90,25 @@ class CategoryTableViewController: UITableViewController {
         }
     }
     
+    //MARK: - Delete Data from Swipe
     
-    //MARK: Load/Save Methods
+    override func updateModel(at indexPath: IndexPath) {
+        
+        super.updateModel(at: indexPath)
+        
+        if let categoryForDeletion = self.categories?[indexPath.row] {
+            
+            do {
+                try self.realm.write {
+                    self.realm.delete(categoryForDeletion)
+                }
+            } catch {
+                print("Error deleting category \(error)")
+            }
+        }
+    }
+    
+    //MARK: - Load/Save Methods
     
     func loadCategories() {
 
