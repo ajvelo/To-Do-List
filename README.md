@@ -9,8 +9,7 @@ This app was done in effort to explain the differences and limitations of variou
 
 #### UserDefaults
 
-  I found that UserDefaults offers a trivial learning curve and thread safe implementation.
-  The read/write of UserDefaults really forces the app to read/write everything or nothing, all at once, so it isn't efficient. If you're storing custom data types, or sensitive data then UserDefaults really isn't ideal.
+  I found that UserDefaults offers a trivial learning curve and thread safe implementation. The read/write of UserDefaults really forces the app to read/write everything or nothing, all at once, so it isn't efficient. If you're storing custom data types, or sensitive data then UserDefaults really isn't ideal.
   
 #### Codable
 
