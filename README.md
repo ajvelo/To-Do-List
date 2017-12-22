@@ -5,7 +5,7 @@ Core Data, Realm, Codable and User Defaults - Persistent Local Data Storage
 
 This app was done in effort to explain the differences and limitations of various ways to persist local data storage.
 
-### Some of the ways model layer objects were managed in this project
+### Some of the ways model layer objects were managed in this project:
 
 #### UserDefaults
 
