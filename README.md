@@ -1,5 +1,5 @@
 # To-Do-List
-Core Data, Realm, User Defaults - Persistent Local Data Storage
+Core Data, Realm, Codable and User Defaults - Persistent Local Data Storage
 
 ## Overview
 
