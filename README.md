@@ -1,6 +1,8 @@
 # To-Do-List
 Core Data, Realm, Codable and User Defaults - Persistent Local Data Storage
 
+<a href="https://media.giphy.com/media/26FeVRtAGMMgbNAlO/giphy"><img src ="https://media.giphy.com/media/26FeVRtAGMMgbNAlO/giphy.gif"/></a>
+
 ## Overview
 
 This app was done in effort to explain the differences and limitations of various ways to persist local data storage.
